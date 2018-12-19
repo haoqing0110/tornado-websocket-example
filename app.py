@@ -1,5 +1,8 @@
 from tornado import websocket, web, ioloop
 import json
+import sys
+import logging
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 cl = []
 
@@ -9,15 +12,18 @@ class IndexHandler(web.RequestHandler):
 
 class SocketHandler(websocket.WebSocketHandler):
     def check_origin(self, origin):
+        logging.info('websocket check')
         return True
 
     def open(self):
         if self not in cl:
             cl.append(self)
+        logging.info('websocket open')
 
     def on_close(self):
         if self in cl:
             cl.remove(self)
+        logging.info('websocket close')
 
 class ApiHandler(web.RequestHandler):
 
